@@ -25,28 +25,6 @@ var RandomColorFactory = function(colors) {
 	}
 }
 
-// return a random move from -=20px to +=20px
-function randomMove() {
-	let size = Math.round(Math.random() * 20);
-	let dir = Math.random();
-	if (dir < .5) {
-		pre = "-=";
-	} else {
-		pre = "+=";
-	}
-	let out = pre + size;
-	//console.log("move " + out);
-	return(out);
-}
-
-// return a random font size from 1rem to 2rem
-function randomSize() {
-	let size = Math.round((Math.random() * 2)+.5);
-    let out = size + "rem";
-    //console.log("size " + out);
-    return(out);
-}
-
 french = new Welcomer("French", "Bienvenue");
 english = new Welcomer("English", "Welcome");
 italian = new Welcomer("Italian", "Benvenuto");
@@ -63,47 +41,47 @@ var welcomers = [french,english,italian,chinese,czech,danish,german,russian,gree
 var fonts = ["Noto Sans","Noto Serif"];
 var fontFactory = new RandomFontFactory(fonts);
 
-var colors = ["purple", "green", "olive", "lime", "navy", "black"];
+var colors = ["purple", "green", "magenta", "olive", "brown", "navy"];
 var colorFactory = new RandomColorFactory(colors);
 
 async function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// most likely we will run this infinitely, but may use numLoops for testing
 var total = 0;
-var numLoops = 15;
+var numLoops = 0;
 
 async function sayWelcome(welcomers, i) {
-	// stop callback loop at end of array
-	console.log("next i = " + i + " total is " + total);
-	await sleep(1000);
+	await sleep(2000);
+
+	// set message text and random styles
 	$(".msg").text(welcomers[i].message);
 	$(".msg").css("color", colorFactory.getOne());
 	$(".msg").css("font-family", fontFactory.getOne());
 
-	// because "animate" writes inline styles, we must use it again to reset these styles
-	$(".msg").css("font-size", randomSize());
+	// because "animate" writes inline styles, we must use it again to reset animated styles
 	$(".msg").animate({ 
 	  	"opacity": 1,
-	  }, 1, "linear");
+	  	"font-size": ".01em"
+	  }, 1, "swing");
+
+
+    // animate this message and initiate the next one 
 	let next = i + 1;
 	total++;
 	if (next>=welcomers.length) {
-	  console.log("RESET");
 	  next = 0;
 	}
-	if (total < numLoops) {
+	if ((numLoops==0) || (total < numLoops)) {
 	  $(".msg").animate({ 
-	  	"left": randomMove(), 
-	  	"top": randomMove(),
 	  	"opacity": 0,
-	  }, 1000, "linear", sayWelcome(welcomers,next));
-    } else {
-    	console.log("... welcomes all done");
-    }
+	  	"font-size": "8em",
+	  }, 2000, "swing", sayWelcome(welcomers,next));
+    } 
 }
 
+// put it in motion
 $(document).ready(function(){
   	sayWelcome(welcomers, 0);
-  	console.log("welcomes begun ...");
 });
