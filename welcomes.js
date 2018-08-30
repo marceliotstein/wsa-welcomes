@@ -63,39 +63,47 @@ var welcomers = [french,english,italian,chinese,czech,danish,german,russian,gree
 var fonts = ["Noto Sans","Noto Serif"];
 var fontFactory = new RandomFontFactory(fonts);
 
-var colors = ["purple", "green", "olive", "lime", "yellow", "black"];
+var colors = ["purple", "green", "olive", "lime", "navy", "black"];
 var colorFactory = new RandomColorFactory(colors);
 
-function sleep(ms) {
+async function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 var total = 0;
+var numLoops = 15;
 
-async function sleepy(welcomers, i) {
+async function sayWelcome(welcomers, i) {
 	// stop callback loop at end of array
-	console.log("next i = " + i);
-	while (total < 100) {
-	  await sleep(1000);
-	  $(".msg").text(welcomers[i].message);
-	  $(".msg").css("color", colorFactory.getOne());
-	  $(".msg").css("font-family", fontFactory.getOne());
-	  $(".msg").css("font-size", randomSize());
-	  i = i + 1;
-	  if (i==welcomers.length) {
-	  	i = 0;
-	  }
-	  if (i%1) {
-	    $(".msg").animate({ "left": randomMove(), "top": randomMove(), "opacity": "-1.0"}, 1000, "linear", sleepy(welcomers,i));
-	  } else {
-	  	$(".msg").animate({ "left": randomMove(), "top": randomMove(), "opacity": "+1.0"}, 1000, "linear", sleepy(welcomers,i));
-	  }
-	  total++;
-	} 
-	
+	console.log("next i = " + i + " total is " + total);
+	await sleep(1000);
+	$(".msg").text(welcomers[i].message);
+	$(".msg").css("color", colorFactory.getOne());
+	$(".msg").css("font-family", fontFactory.getOne());
+
+	// because "animate" writes inline styles, we must use it again to reset these styles
+	$(".msg").css("font-size", randomSize());
+	$(".msg").animate({ 
+	  	"opacity": 1,
+	  }, 1, "linear");
+	let next = i + 1;
+	total++;
+	if (next>=welcomers.length) {
+	  console.log("RESET");
+	  next = 0;
+	}
+	if (total < numLoops) {
+	  $(".msg").animate({ 
+	  	"left": randomMove(), 
+	  	"top": randomMove(),
+	  	"opacity": 0,
+	  }, 1000, "linear", sayWelcome(welcomers,next));
+    } else {
+    	console.log("... welcomes all done");
+    }
 }
 
 $(document).ready(function(){
-  	sleepy(welcomers, 0);
-  	console.log("done");
+  	sayWelcome(welcomers, 0);
+  	console.log("welcomes begun ...");
 });
