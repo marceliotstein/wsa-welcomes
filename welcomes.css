@@ -2,7 +2,11 @@
  * welcomes.css
  */
 
- .msg {
+body {
+   background-color: #119762;
+}
+
+.msg {
    position: absolute;
    left: 50%;
    top: 50%;
