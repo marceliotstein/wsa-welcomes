@@ -88,7 +88,7 @@ var welcomers = [english, french, italian, chinese, czech, danish, german,
 var fonts = ["Noto Sans","Noto Serif"];
 var fontFactory = new RandomFontFactory(fonts);
 
-var colors = ["midnightblue", "darkslategray", "darkolivegreen", "firebrick4", "saddlebrown"];
+var colors = ["black", "white"];
 var colorFactory = new RandomColorFactory(colors);
 
 async function sleep(ms) {
